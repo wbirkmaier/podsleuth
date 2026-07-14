@@ -1,0 +1,46 @@
+{
+  "before_cluster": "demo-eks",
+  "after_cluster": "demo-eks",
+  "added_findings": [
+    {
+      "id": "shared-service-account:payments/api",
+      "kind": "shared_service_account",
+      "severity": "medium",
+      "summary": "Service account payments/api is shared by 2 workloads",
+      "evidence": [
+        "service-account:payments/api"
+      ]
+    }
+  ],
+  "removed_findings": [
+    {
+      "id": "node-fallback:ops/metrics",
+      "kind": "node_role_fallback_risk",
+      "severity": "medium",
+      "summary": "Deployment ops/metrics has no workload identity binding",
+      "evidence": [
+        "workload:ops/metrics"
+      ]
+    }
+  ],
+  "changed_workloads": [
+    {
+      "workload": "ops/metrics",
+      "before_role_arns": [],
+      "after_role_arns": [
+        "arn:aws:iam::111122223333:role/ops-observability"
+      ],
+      "before_node_role_fallback_risk": true,
+      "after_node_role_fallback_risk": false
+    },
+    {
+      "workload": "payments/reconcile",
+      "before_role_arns": [],
+      "after_role_arns": [
+        "arn:aws:iam::111122223333:role/payments-api-irsa"
+      ],
+      "before_node_role_fallback_risk": false,
+      "after_node_role_fallback_risk": false
+    }
+  ]
+}

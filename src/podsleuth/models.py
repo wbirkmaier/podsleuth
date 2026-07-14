@@ -116,3 +116,19 @@ class WorkloadExplanation(BaseModel):
     trust_note: str
     evidence: list[str]
     roles: list[ExplainedRole]
+
+
+class WorkloadDelta(BaseModel):
+    workload: str
+    before_role_arns: list[str]
+    after_role_arns: list[str]
+    before_node_role_fallback_risk: bool
+    after_node_role_fallback_risk: bool
+
+
+class SnapshotDiff(BaseModel):
+    before_cluster: str
+    after_cluster: str
+    added_findings: list[Finding]
+    removed_findings: list[Finding]
+    changed_workloads: list[WorkloadDelta]
