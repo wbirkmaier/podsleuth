@@ -13,5 +13,7 @@ Current findings in the shipped fixture include:
 - wildcard IAM permissions
 - cross-account trust
 - explicit deny statements in a bound role policy
+- a service account bound to more than one workload identity path
+- a referenced IAM role missing from the IAM snapshot
 - orphaned pod identity association
 - a workload falling back to the node role path because no workload identity is attached

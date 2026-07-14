@@ -7,7 +7,7 @@ PodSleuth inspects how Kubernetes workloads in EKS could obtain AWS permissions 
 - Kubernetes service accounts, workloads, and pod identity associations from fixture snapshots
 - IAM roles, trust relationships, and policy documents from fixture snapshots
 - Shared service account usage
-- Wildcards, cross-account trust, explicit deny signals, orphaned associations, and node-role fallback risk
+- Wildcards, cross-account trust, explicit deny signals, missing role references, binding ambiguity, orphaned associations, and node-role fallback risk
 
 ## What it does not do
 
