@@ -1,0 +1,44 @@
+{
+  "cluster": "demo-eks",
+  "service_accounts": [
+    {
+      "namespace": "payments",
+      "name": "api",
+      "annotations": {
+        "eks.amazonaws.com/role-arn": "arn:aws:iam::111122223333:role/payments-api-irsa"
+      }
+    },
+    {
+      "namespace": "ops",
+      "name": "default",
+      "annotations": {}
+    }
+  ],
+  "workloads": [
+    {
+      "kind": "Deployment",
+      "namespace": "ops",
+      "name": "metrics",
+      "service_account": "default"
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "payments",
+      "name": "api",
+      "service_account": "api"
+    },
+    {
+      "kind": "Job",
+      "namespace": "payments",
+      "name": "reconcile",
+      "service_account": "api"
+    }
+  ],
+  "pod_identity_associations": [
+    {
+      "namespace": "orphaned",
+      "service_account": "missing",
+      "role_arn": "arn:aws:iam::111122223333:role/orphaned"
+    }
+  ]
+}

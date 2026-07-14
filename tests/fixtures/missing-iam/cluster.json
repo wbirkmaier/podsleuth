@@ -1,0 +1,6 @@
+{
+  "cluster": "broken",
+  "service_accounts": [],
+  "workloads": [],
+  "pod_identity_associations": []
+}
