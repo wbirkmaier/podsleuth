@@ -55,15 +55,19 @@
       "arn": "arn:aws:iam::111122223333:role/ops-observability",
       "name": "ops-observability",
       "account_id": "111122223333",
+      "trust_mode": "service",
       "wildcard_permissions": false,
-      "cross_account_trust": false
+      "cross_account_trust": false,
+      "explicit_deny": false
     },
     {
       "arn": "arn:aws:iam::111122223333:role/payments-api-irsa",
       "name": "payments-api-irsa",
       "account_id": "111122223333",
+      "trust_mode": "federated",
       "wildcard_permissions": true,
-      "cross_account_trust": false
+      "cross_account_trust": false,
+      "explicit_deny": true
     }
   ],
   "findings": [
