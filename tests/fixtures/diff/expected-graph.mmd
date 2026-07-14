@@ -1,0 +1,20 @@
+graph TD
+    workload_ops_metrics["Deployment ops/metrics"]
+    sa_ops_default["ServiceAccount ops/default"]
+    workload_ops_metrics --> sa_ops_default
+    role_arn_aws_iam__111122223333_role_ops_observability["Role arn:aws:iam::111122223333:role/ops-observability"]
+    sa_ops_default --> role_arn_aws_iam__111122223333_role_ops_observability
+    workload_payments_api["Deployment payments/api"]
+    sa_payments_api["ServiceAccount payments/api"]
+    workload_payments_api --> sa_payments_api
+    role_arn_aws_iam__111122223333_role_payments_api_irsa["Role arn:aws:iam::111122223333:role/payments-api-irsa"]
+    sa_payments_api --> role_arn_aws_iam__111122223333_role_payments_api_irsa
+    workload_payments_reconcile["Job payments/reconcile"]
+    sa_payments_api["ServiceAccount payments/api"]
+    workload_payments_reconcile --> sa_payments_api
+    role_arn_aws_iam__111122223333_role_payments_api_irsa["Role arn:aws:iam::111122223333:role/payments-api-irsa"]
+    sa_payments_api --> role_arn_aws_iam__111122223333_role_payments_api_irsa
+    finding_shared_service_account_payments_api{"shared_service_account"}
+    sa_payments_api -.-> finding_shared_service_account_payments_api
+    finding_wildcard_payments_api_irsa{"wildcard_permission"}
+    role_arn_aws_iam__111122223333_role_payments_api_irsa -.-> finding_wildcard_payments_api_irsa
