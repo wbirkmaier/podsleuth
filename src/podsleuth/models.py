@@ -100,3 +100,19 @@ class IdentitySnapshot(BaseModel):
     workloads: list[WorkloadIdentity]
     roles: list[RoleSummary]
     findings: list[Finding]
+
+
+class ExplainedRole(BaseModel):
+    arn: str
+    cross_account_trust: bool
+    wildcard_permissions: bool
+
+
+class WorkloadExplanation(BaseModel):
+    workload: str
+    service_account: str
+    effective_role_arns: list[str]
+    node_role_fallback_risk: bool
+    trust_note: str
+    evidence: list[str]
+    roles: list[ExplainedRole]
