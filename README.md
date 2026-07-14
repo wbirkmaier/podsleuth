@@ -31,10 +31,11 @@ PodSleuth inspects how Kubernetes workloads in EKS could obtain AWS permissions 
 
 ```bash
 uv run podsleuth scan --fixtures tests/fixtures/identity-snapshot
+uv run podsleuth explain payments/api --fixtures tests/fixtures/identity-snapshot
 ```
 
-The current scan output is JSON and includes typed inventory plus findings with attached evidence IDs.
+The current scan output is JSON and includes typed inventory plus findings with attached evidence IDs. The explain command renders a concise text path for one workload and calls out uncertainty when trust or policy evidence is incomplete.
 
 ## Development status
 
-`scan` works offline from fixtures. `explain`, `diff`, and Mermaid rendering are planned next.
+`scan` and `explain` work offline from fixtures. `diff` and Mermaid rendering are planned next.

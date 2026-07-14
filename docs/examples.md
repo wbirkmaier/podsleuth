@@ -2,6 +2,7 @@
 
 ```bash
 uv run podsleuth scan --fixtures tests/fixtures/identity-snapshot
+uv run podsleuth explain payments/api --fixtures tests/fixtures/identity-snapshot
 ```
 
 Current findings in the shipped fixture include:
