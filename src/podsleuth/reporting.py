@@ -24,8 +24,10 @@ def build_workload_explanation(
     explained_roles = [
         ExplainedRole(
             arn=role_arn,
+            trust_mode=role_map[role_arn].trust_mode,
             cross_account_trust=role_map[role_arn].cross_account_trust,
             wildcard_permissions=role_map[role_arn].wildcard_permissions,
+            explicit_deny=role_map[role_arn].explicit_deny,
         )
         for role_arn in workload.effective_role_arns
         if role_arn in role_map
@@ -68,8 +70,12 @@ def render_workload_explanation(explanation: WorkloadExplanation) -> str:
             flags: list[str] = []
             if role.cross_account_trust:
                 flags.append("cross-account trust")
+            if role.trust_mode != "unknown":
+                flags.append(f"trust mode: {role.trust_mode}")
             if role.wildcard_permissions:
                 flags.append("wildcard permissions")
+            if role.explicit_deny:
+                flags.append("explicit deny present")
             flag_text = f" ({', '.join(flags)})" if flags else ""
             lines.append(f"- {role.arn}{flag_text}")
     else:

@@ -90,8 +90,10 @@ class RoleSummary(BaseModel):
     arn: str
     name: str
     account_id: str
+    trust_mode: str
     wildcard_permissions: bool
     cross_account_trust: bool
+    explicit_deny: bool
 
 
 class IdentitySnapshot(BaseModel):
@@ -104,8 +106,10 @@ class IdentitySnapshot(BaseModel):
 
 class ExplainedRole(BaseModel):
     arn: str
+    trust_mode: str
     cross_account_trust: bool
     wildcard_permissions: bool
+    explicit_deny: bool
 
 
 class WorkloadExplanation(BaseModel):

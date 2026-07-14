@@ -44,6 +44,30 @@ def _has_cross_account_trust(role_arn: str, policy_documents: list[RawPolicyDocu
     return False
 
 
+def _has_explicit_deny(policy_documents: list[RawPolicyDocument]) -> bool:
+    for policy_document in policy_documents:
+        for statement in policy_document.statements:
+            if statement.effect == "Deny":
+                return True
+    return False
+
+
+def _trust_mode(policy_documents: list[RawPolicyDocument]) -> str:
+    principals = {
+        principal_type
+        for policy_document in policy_documents
+        for statement in policy_document.statements
+        for principal_type in statement.principal
+    }
+    if "Federated" in principals:
+        return "federated"
+    if "Service" in principals:
+        return "service"
+    if "AWS" in principals:
+        return "aws-principal"
+    return "unknown"
+
+
 def build_snapshot(bundle: FixtureBundle) -> IdentitySnapshot:
     association_map: dict[tuple[str, str], list[str]] = defaultdict(list)
     findings: list[Finding] = []
@@ -157,11 +181,16 @@ def build_snapshot(bundle: FixtureBundle) -> IdentitySnapshot:
             arn=role.arn,
             name=role.name,
             account_id=_account_id_from_arn(role.arn),
+            trust_mode=_trust_mode([role.trust_policy]),
             wildcard_permissions=_has_wildcard_permissions(
                 [policy.document for policy in role.attached_policies]
                 + [policy.document for policy in role.inline_policies]
             ),
             cross_account_trust=_has_cross_account_trust(role.arn, [role.trust_policy]),
+            explicit_deny=_has_explicit_deny(
+                [policy.document for policy in role.attached_policies]
+                + [policy.document for policy in role.inline_policies]
+            ),
         )
         roles.append(role_summary)
         if role_summary.wildcard_permissions:
@@ -181,6 +210,16 @@ def build_snapshot(bundle: FixtureBundle) -> IdentitySnapshot:
                     kind="cross_account_trust",
                     severity="medium",
                     summary=f"Role {role.name} trusts a principal in another AWS account",
+                    evidence=[f"role:{role.arn}"],
+                )
+            )
+        if role_summary.explicit_deny:
+            findings.append(
+                Finding(
+                    id=f"explicit-deny:{role.name}",
+                    kind="explicit_deny",
+                    severity="low",
+                    summary=f"Role {role.name} includes explicit deny statements",
                     evidence=[f"role:{role.arn}"],
                 )
             )
