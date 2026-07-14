@@ -51,15 +51,19 @@
       "arn": "arn:aws:iam::111122223333:role/external-ci",
       "name": "external-ci",
       "account_id": "111122223333",
+      "trust_mode": "aws-principal",
       "wildcard_permissions": false,
-      "cross_account_trust": true
+      "cross_account_trust": true,
+      "explicit_deny": false
     },
     {
       "arn": "arn:aws:iam::111122223333:role/payments-api-irsa",
       "name": "payments-api-irsa",
       "account_id": "111122223333",
+      "trust_mode": "federated",
       "wildcard_permissions": true,
-      "cross_account_trust": false
+      "cross_account_trust": false,
+      "explicit_deny": true
     }
   ],
   "findings": [
@@ -70,6 +74,15 @@
       "summary": "Role external-ci trusts a principal in another AWS account",
       "evidence": [
         "role:arn:aws:iam::111122223333:role/external-ci"
+      ]
+    },
+    {
+      "id": "explicit-deny:payments-api-irsa",
+      "kind": "explicit_deny",
+      "severity": "low",
+      "summary": "Role payments-api-irsa includes explicit deny statements",
+      "evidence": [
+        "role:arn:aws:iam::111122223333:role/payments-api-irsa"
       ]
     },
     {

@@ -7,7 +7,7 @@ PodSleuth inspects how Kubernetes workloads in EKS could obtain AWS permissions 
 - Kubernetes service accounts, workloads, and pod identity associations from fixture snapshots
 - IAM roles, trust relationships, and policy documents from fixture snapshots
 - Shared service account usage
-- Wildcards, cross-account trust, orphaned associations, and node-role fallback risk
+- Wildcards, cross-account trust, explicit deny signals, orphaned associations, and node-role fallback risk
 
 ## What it does not do
 
@@ -37,6 +37,8 @@ uv run podsleuth render tests/fixtures/diff/after.json --format mermaid
 ```
 
 The current scan output is JSON and includes typed inventory plus findings with attached evidence IDs. The explain command renders a concise text path for one workload and calls out uncertainty when trust or policy evidence is incomplete. The diff command compares two JSON snapshots and reports added and removed findings plus workload identity changes. The render command emits a Mermaid graph for review and pull request discussion.
+
+Role summaries include trust mode and whether explicit deny statements were found in attached or inline policies.
 
 ## Development status
 

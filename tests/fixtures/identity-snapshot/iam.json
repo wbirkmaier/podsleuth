@@ -59,6 +59,16 @@
                   "*"
                 ],
                 "principal": {}
+              },
+              {
+                "effect": "Deny",
+                "action": [
+                  "s3:DeleteObject"
+                ],
+                "resource": [
+                  "arn:aws:s3:::payments-archive/*"
+                ],
+                "principal": {}
               }
             ]
           }
