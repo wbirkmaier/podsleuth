@@ -7,9 +7,11 @@ import typer
 from rich.console import Console
 
 from podsleuth.analysis import build_snapshot
+from podsleuth.diffing import diff_snapshots
 from podsleuth.exceptions import PodSleuthError
 from podsleuth.fixtures import load_fixture_snapshot
 from podsleuth.reporting import build_workload_explanation, render_workload_explanation
+from podsleuth.snapshot_io import load_snapshot
 
 app = typer.Typer(
     help="Inspect EKS workload identity wiring without mutating cluster or AWS state.",
@@ -75,6 +77,20 @@ def explain(
         raise typer.Exit(code=error.exit_code) from error
 
     typer.echo(render_workload_explanation(explanation))
+
+
+@app.command("diff")
+def diff(
+    before: Annotated[Path, typer.Argument(exists=True, readable=True, dir_okay=False)],
+    after: Annotated[Path, typer.Argument(exists=True, readable=True, dir_okay=False)],
+) -> None:
+    try:
+        snapshot_diff = diff_snapshots(load_snapshot(before), load_snapshot(after))
+    except PodSleuthError as error:
+        error_console.print(str(error), style="red")
+        raise typer.Exit(code=error.exit_code) from error
+
+    typer.echo(snapshot_diff.model_dump_json(indent=2))
 
 
 def main(argv: Annotated[list[str] | None, typer.Argument(hidden=True)] = None) -> None:
