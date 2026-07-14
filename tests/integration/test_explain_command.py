@@ -14,6 +14,7 @@ def test_explain_renders_expected_workload_summary() -> None:
     assert "Workload: payments/api" in result.stdout
     assert "Service account: payments/api" in result.stdout
     assert "wildcard permissions" in result.stdout
+    assert "Missing role evidence: arn:aws:iam::111122223333:role/payments-shadow" in result.stdout
 
 
 def test_explain_returns_distinct_exit_code_for_missing_workload() -> None:

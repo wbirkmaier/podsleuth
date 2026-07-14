@@ -71,6 +71,7 @@ def _trust_mode(policy_documents: list[RawPolicyDocument]) -> str:
 def build_snapshot(bundle: FixtureBundle) -> IdentitySnapshot:
     association_map: dict[tuple[str, str], list[str]] = defaultdict(list)
     findings: list[Finding] = []
+    known_role_arns = {role.arn for role in bundle.iam.roles}
 
     for association in bundle.cluster.pod_identity_associations:
         association_map[(association.namespace, association.service_account)].append(
@@ -152,6 +153,33 @@ def build_snapshot(bundle: FixtureBundle) -> IdentitySnapshot:
                     evidence=[f"service-account:{identity.namespace}/{identity.name}"],
                 )
             )
+        if len(identity.role_arns) > 1:
+            findings.append(
+                Finding(
+                    id=f"multiple-bindings:{identity.namespace}/{identity.name}",
+                    kind="multiple_identity_bindings",
+                    severity="medium",
+                    summary=(
+                        f"Service account {identity.namespace}/{identity.name} "
+                        "has more than one role binding"
+                    ),
+                    evidence=[f"service-account:{identity.namespace}/{identity.name}"],
+                )
+            )
+        for role_arn in identity.role_arns:
+            if role_arn not in known_role_arns:
+                findings.append(
+                    Finding(
+                        id=f"missing-role:{identity.namespace}/{identity.name}:{role_arn}",
+                        kind="missing_role_reference",
+                        severity="high",
+                        summary=(
+                            f"Service account {identity.namespace}/{identity.name} references role "
+                            f"{role_arn}, but that role is absent from the IAM snapshot"
+                        ),
+                        evidence=[f"service-account:{identity.namespace}/{identity.name}"],
+                    )
+                )
 
     for association in sorted(
         bundle.cluster.pod_identity_associations,
