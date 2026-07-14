@@ -1,3 +1,13 @@
 # Examples
 
-Example fixture-driven scans and explanations will be added as the analysis commands land.
+```bash
+uv run podsleuth scan --fixtures tests/fixtures/identity-snapshot
+```
+
+Current findings in the shipped fixture include:
+
+- shared service account usage across two workloads
+- wildcard IAM permissions
+- cross-account trust
+- orphaned pod identity association
+- a workload falling back to the node role path because no workload identity is attached

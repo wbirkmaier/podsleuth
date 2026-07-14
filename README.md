@@ -2,12 +2,12 @@
 
 PodSleuth inspects how Kubernetes workloads in EKS could obtain AWS permissions through service accounts, IRSA, pod identity associations, and node-role fallback.
 
-## What it inspects
+## What it inspects today
 
-- Kubernetes service accounts and workload references
-- IAM roles, trust relationships, and policy documents
+- Kubernetes service accounts, workloads, and pod identity associations from fixture snapshots
+- IAM roles, trust relationships, and policy documents from fixture snapshots
 - Shared service account usage
-- Wildcards, cross-account trust, and orphaned associations
+- Wildcards, cross-account trust, orphaned associations, and node-role fallback risk
 
 ## What it does not do
 
@@ -17,7 +17,7 @@ PodSleuth inspects how Kubernetes workloads in EKS could obtain AWS permissions 
 
 ## Offline and live use
 
-- Offline: import sanitized Kubernetes and IAM fixtures, then run `podsleuth scan` and `podsleuth explain` against them.
+- Offline: run `podsleuth scan --fixtures tests/fixtures/identity-snapshot`.
 - Live: planned adapters will read EKS and IAM metadata with least-privilege permissions.
 
 ## Safety
@@ -27,6 +27,14 @@ PodSleuth inspects how Kubernetes workloads in EKS could obtain AWS permissions 
 - No hidden network calls
 - Evidence gaps are surfaced as uncertainty
 
+## Example
+
+```bash
+uv run podsleuth scan --fixtures tests/fixtures/identity-snapshot
+```
+
+The current scan output is JSON and includes typed inventory plus findings with attached evidence IDs.
+
 ## Development status
 
-The repository scaffold and CLI entrypoint are in place. Domain analysis commands are being added incrementally.
+`scan` works offline from fixtures. `explain`, `diff`, and Mermaid rendering are planned next.

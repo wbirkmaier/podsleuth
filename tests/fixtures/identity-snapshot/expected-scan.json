@@ -1,0 +1,112 @@
+{
+  "cluster": "demo-eks",
+  "service_accounts": [
+    {
+      "namespace": "ops",
+      "name": "default",
+      "role_arns": [],
+      "workload_count": 1
+    },
+    {
+      "namespace": "payments",
+      "name": "api",
+      "role_arns": [
+        "arn:aws:iam::111122223333:role/payments-api-irsa"
+      ],
+      "workload_count": 2
+    }
+  ],
+  "workloads": [
+    {
+      "kind": "Deployment",
+      "namespace": "ops",
+      "name": "metrics",
+      "service_account": "default",
+      "effective_role_arns": [],
+      "node_role_fallback_risk": true
+    },
+    {
+      "kind": "Deployment",
+      "namespace": "payments",
+      "name": "api",
+      "service_account": "api",
+      "effective_role_arns": [
+        "arn:aws:iam::111122223333:role/payments-api-irsa"
+      ],
+      "node_role_fallback_risk": false
+    },
+    {
+      "kind": "Job",
+      "namespace": "payments",
+      "name": "reconcile",
+      "service_account": "api",
+      "effective_role_arns": [
+        "arn:aws:iam::111122223333:role/payments-api-irsa"
+      ],
+      "node_role_fallback_risk": false
+    }
+  ],
+  "roles": [
+    {
+      "arn": "arn:aws:iam::111122223333:role/external-ci",
+      "name": "external-ci",
+      "account_id": "111122223333",
+      "wildcard_permissions": false,
+      "cross_account_trust": true
+    },
+    {
+      "arn": "arn:aws:iam::111122223333:role/payments-api-irsa",
+      "name": "payments-api-irsa",
+      "account_id": "111122223333",
+      "wildcard_permissions": true,
+      "cross_account_trust": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "cross-account:external-ci",
+      "kind": "cross_account_trust",
+      "severity": "medium",
+      "summary": "Role external-ci trusts a principal in another AWS account",
+      "evidence": [
+        "role:arn:aws:iam::111122223333:role/external-ci"
+      ]
+    },
+    {
+      "id": "node-fallback:ops/metrics",
+      "kind": "node_role_fallback_risk",
+      "severity": "medium",
+      "summary": "Deployment ops/metrics has no workload identity binding",
+      "evidence": [
+        "workload:ops/metrics"
+      ]
+    },
+    {
+      "id": "orphaned-association:orphaned/missing",
+      "kind": "orphaned_pod_identity_association",
+      "severity": "high",
+      "summary": "Pod identity association references a service account that is not present in the snapshot",
+      "evidence": [
+        "association:orphaned/missing"
+      ]
+    },
+    {
+      "id": "shared-service-account:payments/api",
+      "kind": "shared_service_account",
+      "severity": "medium",
+      "summary": "Service account payments/api is shared by 2 workloads",
+      "evidence": [
+        "service-account:payments/api"
+      ]
+    },
+    {
+      "id": "wildcard:payments-api-irsa",
+      "kind": "wildcard_permission",
+      "severity": "high",
+      "summary": "Role payments-api-irsa allows wildcard action or resource access",
+      "evidence": [
+        "role:arn:aws:iam::111122223333:role/payments-api-irsa"
+      ]
+    }
+  ]
+}
