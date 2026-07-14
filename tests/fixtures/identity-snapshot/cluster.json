@@ -36,6 +36,11 @@
   ],
   "pod_identity_associations": [
     {
+      "namespace": "payments",
+      "service_account": "api",
+      "role_arn": "arn:aws:iam::111122223333:role/payments-shadow"
+    },
+    {
       "namespace": "orphaned",
       "service_account": "missing",
       "role_arn": "arn:aws:iam::111122223333:role/orphaned"

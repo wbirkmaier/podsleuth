@@ -116,6 +116,7 @@ class WorkloadExplanation(BaseModel):
     workload: str
     service_account: str
     effective_role_arns: list[str]
+    missing_role_arns: list[str]
     node_role_fallback_risk: bool
     trust_note: str
     evidence: list[str]

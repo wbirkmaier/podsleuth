@@ -11,7 +11,8 @@
       "namespace": "payments",
       "name": "api",
       "role_arns": [
-        "arn:aws:iam::111122223333:role/payments-api-irsa"
+        "arn:aws:iam::111122223333:role/payments-api-irsa",
+        "arn:aws:iam::111122223333:role/payments-shadow"
       ],
       "workload_count": 2
     }
@@ -31,7 +32,8 @@
       "name": "api",
       "service_account": "api",
       "effective_role_arns": [
-        "arn:aws:iam::111122223333:role/payments-api-irsa"
+        "arn:aws:iam::111122223333:role/payments-api-irsa",
+        "arn:aws:iam::111122223333:role/payments-shadow"
       ],
       "node_role_fallback_risk": false
     },
@@ -41,7 +43,8 @@
       "name": "reconcile",
       "service_account": "api",
       "effective_role_arns": [
-        "arn:aws:iam::111122223333:role/payments-api-irsa"
+        "arn:aws:iam::111122223333:role/payments-api-irsa",
+        "arn:aws:iam::111122223333:role/payments-shadow"
       ],
       "node_role_fallback_risk": false
     }
@@ -83,6 +86,24 @@
       "summary": "Role payments-api-irsa includes explicit deny statements",
       "evidence": [
         "role:arn:aws:iam::111122223333:role/payments-api-irsa"
+      ]
+    },
+    {
+      "id": "missing-role:payments/api:arn:aws:iam::111122223333:role/payments-shadow",
+      "kind": "missing_role_reference",
+      "severity": "high",
+      "summary": "Service account payments/api references role arn:aws:iam::111122223333:role/payments-shadow, but that role is absent from the IAM snapshot",
+      "evidence": [
+        "service-account:payments/api"
+      ]
+    },
+    {
+      "id": "multiple-bindings:payments/api",
+      "kind": "multiple_identity_bindings",
+      "severity": "medium",
+      "summary": "Service account payments/api has more than one role binding",
+      "evidence": [
+        "service-account:payments/api"
       ]
     },
     {

@@ -21,6 +21,9 @@ def build_workload_explanation(
         raise PodSleuthError(f"workload not found in snapshot: {workload_ref}", exit_code=3)
 
     role_map = {role.arn: role for role in snapshot.roles}
+    missing_role_arns = [
+        role_arn for role_arn in workload.effective_role_arns if role_arn not in role_map
+    ]
     explained_roles = [
         ExplainedRole(
             arn=role_arn,
@@ -47,6 +50,7 @@ def build_workload_explanation(
         workload=f"{workload.namespace}/{workload.name}",
         service_account=f"{workload.namespace}/{workload.service_account}",
         effective_role_arns=workload.effective_role_arns,
+        missing_role_arns=missing_role_arns,
         node_role_fallback_risk=workload.node_role_fallback_risk,
         trust_note=trust_note,
         evidence=[
@@ -80,5 +84,7 @@ def render_workload_explanation(explanation: WorkloadExplanation) -> str:
             lines.append(f"- {role.arn}{flag_text}")
     else:
         lines.append("Roles: none")
+    if explanation.missing_role_arns:
+        lines.append(f"Missing role evidence: {', '.join(explanation.missing_role_arns)}")
     lines.append(f"Evidence: {', '.join(explanation.evidence)}")
     return "\n".join(lines)

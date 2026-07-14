@@ -8,3 +8,4 @@
 - Added snapshot diffing for findings and workload identity changes.
 - Added Mermaid rendering for workload, service account, role, and finding relationships.
 - Added explicit deny detection and trust-mode evidence to avoid overstating usable access.
+- Added findings for multiple workload identity bindings and missing IAM role references.

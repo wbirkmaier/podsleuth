@@ -10,6 +10,7 @@ def test_build_workload_explanation_describes_bound_role() -> None:
     explanation = build_workload_explanation(bundle, build_snapshot(bundle), "payments/api")
 
     assert explanation.node_role_fallback_risk is False
+    assert explanation.missing_role_arns == ["arn:aws:iam::111122223333:role/payments-shadow"]
     assert explanation.roles[0].wildcard_permissions is True
     assert explanation.roles[0].explicit_deny is True
 
@@ -30,3 +31,4 @@ def test_render_workload_explanation_mentions_trust_mode_and_explicit_deny() -> 
 
     assert "trust mode: federated" in rendered
     assert "explicit deny present" in rendered
+    assert "Missing role evidence: arn:aws:iam::111122223333:role/payments-shadow" in rendered
