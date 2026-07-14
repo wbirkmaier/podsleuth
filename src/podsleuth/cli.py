@@ -10,6 +10,7 @@ from podsleuth.analysis import build_snapshot
 from podsleuth.diffing import diff_snapshots
 from podsleuth.exceptions import PodSleuthError
 from podsleuth.fixtures import load_fixture_snapshot
+from podsleuth.rendering import render_snapshot
 from podsleuth.reporting import build_workload_explanation, render_workload_explanation
 from podsleuth.snapshot_io import load_snapshot
 
@@ -91,6 +92,20 @@ def diff(
         raise typer.Exit(code=error.exit_code) from error
 
     typer.echo(snapshot_diff.model_dump_json(indent=2))
+
+
+@app.command("render")
+def render(
+    snapshot: Annotated[Path, typer.Argument(exists=True, readable=True, dir_okay=False)],
+    output_format: Annotated[
+        str, typer.Option("--format", help="Only 'mermaid' is currently supported.")
+    ] = "mermaid",
+) -> None:
+    try:
+        typer.echo(render_snapshot(load_snapshot(snapshot), output_format))
+    except PodSleuthError as error:
+        error_console.print(str(error), style="red")
+        raise typer.Exit(code=error.exit_code) from error
 
 
 def main(argv: Annotated[list[str] | None, typer.Argument(hidden=True)] = None) -> None:

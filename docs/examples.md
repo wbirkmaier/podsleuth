@@ -4,6 +4,7 @@
 uv run podsleuth scan --fixtures tests/fixtures/identity-snapshot
 uv run podsleuth explain payments/api --fixtures tests/fixtures/identity-snapshot
 uv run podsleuth diff tests/fixtures/diff/before.json tests/fixtures/diff/after.json
+uv run podsleuth render tests/fixtures/diff/after.json --format mermaid
 ```
 
 Current findings in the shipped fixture include:
